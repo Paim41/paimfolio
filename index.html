@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Paim — Web Application Developer</title>
+<meta name="description" content="Paim — Full-Stack Web Application Developer building scalable and user-friendly applications.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg0:#020d08;--bg1:#071a0f;--bg2:#0a2318;
+  --glass:rgba(10,35,24,0.6);
+  --gn:#00ff88;--gn2:#00cc6a;--gn3:rgba(0,255,136,0.12);--gn4:rgba(0,255,136,0.06);
+  --text:#e8f5ee;--text2:#8ab89a;--text3:#4a7a5a;
+  --border:rgba(0,255,136,0.15);--border2:rgba(0,255,136,0.3);
+  --card:rgba(7,26,15,0.8);
+  --font-h:'Syne',sans-serif;--font-b:'DM Sans',sans-serif;
+  --transition:0.35s cubic-bezier(0.22,1,0.36,1);
+}
+.light{
+  --bg0:#f0f7f3;--bg1:#e0ede6;--bg2:#d0e4d8;
+  --glass:rgba(240,247,243,0.8);
+  --gn:#007a40;--gn2:#005c2e;--gn3:rgba(0,122,64,0.12);--gn4:rgba(0,122,64,0.06);
+  --text:#0a1f12;--text2:#2a5c3a;--text3:#5a9a6a;
+  --border:rgba(0,122,64,0.2);--border2:rgba(0,122,64,0.4);
+  --card:rgba(224,237,230,0.9);
+}
+html{scroll-behavior:smooth}
+body{background:var(--bg0);color:var(--text);font-family:var(--font-b);overflow-x:hidden;cursor:none;transition:background 0.4s,color 0.4s;line-height:1.6}
+.grid-bg{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:0.025;
+  background-image:linear-gradient(var(--gn) 1px,transparent 1px),linear-gradient(90deg,var(--gn) 1px,transparent 1px);
+  background-size:60px 60px}
+#cursor{position:fixed;width:12px;height:12px;border-radius:50%;background:var(--gn);
+  pointer-events:none;z-index:9999;transform:translate(-50%,-50%);
+  transition:width 0.2s,height 0.2s;
+  box-shadow:0 0 16px var(--gn),0 0 32px rgba(0,255,136,0.4);mix-blend-mode:screen}
+#cursor-ring{position:fixed;width:40px;height:40px;border-radius:50%;
+  border:1px solid rgba(0,255,136,0.4);pointer-events:none;z-index:9998;
+  transform:translate(-50%,-50%);transition:all 0.12s ease-out}
+#preloader{position:fixed;inset:0;background:var(--bg0);z-index:10000;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  transition:opacity 0.7s ease}
+#preloader.done{opacity:0;pointer-events:none}
+.pre-logo{font-family:var(--font-h);font-size:3.5rem;font-weight:800;
+  background:linear-gradient(135deg,var(--gn),#00cc6a,#88ffcc,#00e5ff);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-size:200% 200%;
+  animation:gradShift 2s ease infinite,glowPulse 1.5s ease-in-out infinite}
+.pre-sub{font-size:0.85rem;color:var(--text3);letter-spacing:0.2em;text-transform:uppercase;margin-top:0.5rem;animation:fadeIn 0.5s 0.3s both}
+.pre-bar-wrap{width:200px;height:2px;background:rgba(0,255,136,0.1);border-radius:2px;margin-top:2rem;overflow:hidden}
+.pre-bar{height:100%;background:linear-gradient(90deg,var(--gn),#88ffcc,#00e5ff);border-radius:2px;animation:preLoad 1.8s ease-out forwards}
+@keyframes preLoad{0%{width:0}100%{width:100%}}
+@keyframes gradShift{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
+@keyframes glowPulse{0%,100%{opacity:1}50%{opacity:0.7}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(35px)}to{opacity:1;transform:translateY(0)}}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:0.4;transform:scale(0.7)}}
+@keyframes eq{0%,100%{transform:scaleY(0.35)}50%{transform:scaleY(1)}}
+@keyframes scrollPulse{0%{opacity:0.2;transform:scaleY(0.8)}50%{opacity:1;transform:scaleY(1.1)}100%{opacity:0.2;transform:scaleY(0.8)}}
+nav{position:fixed;top:0;left:0;right:0;z-index:1000;padding:1rem 3rem;
+  display:flex;align-items:center;justify-content:space-between;
+  backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);
+  background:rgba(2,13,8,0.75);border-bottom:1px solid var(--border);transition:all 0.4s}
+.light nav{background:rgba(240,247,243,0.85)}
+.nav-logo{font-family:var(--font-h);font-size:1.5rem;font-weight:800;
+  background:linear-gradient(135deg,var(--gn),#88ffcc);-webkit-background-clip:text;-webkit-text-fill-color:transparent;text-decoration:none}
+.nav-links{display:flex;gap:2.5rem;list-style:none}
+.nav-links a{color:var(--text2);text-decoration:none;font-size:0.82rem;font-weight:500;
+  position:relative;transition:color 0.3s;letter-spacing:0.1em;text-transform:uppercase}
+.nav-links a::after{content:'';position:absolute;bottom:-5px;left:0;width:0;height:1px;
+  background:var(--gn);transition:width 0.3s;box-shadow:0 0 8px var(--gn)}
+.nav-links a:hover,.nav-links a.active{color:var(--gn)}
+.nav-links a:hover::after,.nav-links a.active::after{width:100%}
+.nav-right{display:flex;align-items:center;gap:1rem}
+.theme-btn{background:none;border:1px solid var(--border);color:var(--text2);
+  padding:0.45rem 1rem;border-radius:50px;font-size:0.8rem;cursor:none;
+  transition:all 0.3s;font-family:var(--font-b);letter-spacing:0.05em}
+.theme-btn:hover{border-color:var(--gn);color:var(--gn);box-shadow:0 0 15px var(--gn3)}
+#hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;
+  justify-content:center;text-align:center;position:relative;padding:8rem 2rem 4rem;max-width:100%;overflow:hidden}
+#heroCanvas{position:absolute;inset:0;z-index:0;width:100%;height:100%}
+.hero-content{position:relative;z-index:2;max-width:800px}
+.hero-badge{display:inline-flex;align-items:center;gap:0.5rem;
+  background:var(--gn3);border:1px solid var(--border);border-radius:50px;
+  padding:0.45rem 1.25rem;font-size:0.78rem;color:var(--gn);margin-bottom:2rem;
+  animation:fadeUp 0.8s ease both;letter-spacing:0.08em;text-transform:uppercase;font-weight:500}
+.hero-dot{width:6px;height:6px;border-radius:50%;background:var(--gn);
+  animation:pulse 1.8s infinite;box-shadow:0 0 8px var(--gn);flex-shrink:0}
+.hero-title{font-family:var(--font-h);font-size:clamp(3.5rem,9vw,7rem);
+  font-weight:800;line-height:1.0;margin-bottom:1.25rem;animation:fadeUp 0.8s 0.1s ease both}
+.hero-title .line1{display:block;color:var(--text)}
+.hero-title .grad{display:block;background:linear-gradient(135deg,var(--gn) 0%,#88ffcc 40%,#00e5ff 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-size:200% 200%;animation:gradShift 4s ease infinite}
+.hero-sub{font-size:clamp(1rem,2.5vw,1.2rem);color:var(--text2);max-width:560px;
+  margin:0 auto 3rem;line-height:1.75;animation:fadeUp 0.8s 0.2s ease both;font-weight:300}
+.hero-btns{display:flex;gap:1.25rem;justify-content:center;flex-wrap:wrap;animation:fadeUp 0.8s 0.3s ease both}
+.btn-primary{background:linear-gradient(135deg,var(--gn),var(--gn2));color:#000;
+  font-weight:700;padding:0.9rem 2.25rem;border-radius:50px;border:none;
+  font-size:0.92rem;cursor:none;transition:all 0.3s;font-family:var(--font-b);
+  text-decoration:none;display:inline-flex;align-items:center;gap:0.5rem;
+  box-shadow:0 0 30px rgba(0,255,136,0.25),0 4px 20px rgba(0,0,0,0.3);letter-spacing:0.02em}
+.btn-primary:hover{transform:translateY(-3px) scale(1.02);box-shadow:0 0 50px rgba(0,255,136,0.5),0 8px 30px rgba(0,0,0,0.4)}
+.btn-outline{background:transparent;color:var(--gn);font-weight:600;padding:0.9rem 2.25rem;
+  border-radius:50px;border:1px solid var(--border2);font-size:0.92rem;cursor:none;
+  transition:all 0.3s;font-family:var(--font-b);text-decoration:none;
+  display:inline-flex;align-items:center;gap:0.5rem;letter-spacing:0.02em}
+.btn-outline:hover{border-color:var(--gn);background:var(--gn3);
+  box-shadow:0 0 25px var(--gn3),0 4px 20px rgba(0,0,0,0.2);transform:translateY(-3px)}
+.hero-scroll{position:absolute;bottom:2.5rem;left:50%;transform:translateX(-50%);
+  display:flex;flex-direction:column;align-items:center;gap:0.5rem;animation:fadeIn 1s 1.5s both}
+.scroll-text{font-size:0.7rem;text-transform:uppercase;letter-spacing:0.2em;color:var(--text3)}
+.scroll-line{width:1px;height:50px;background:linear-gradient(to bottom,var(--gn),transparent);animation:scrollPulse 2.5s ease-in-out infinite}
+section{padding:6rem 3rem;max-width:1120px;margin:0 auto;position:relative}
+.section-label{font-size:0.72rem;text-transform:uppercase;letter-spacing:0.25em;
+  color:var(--gn);margin-bottom:0.75rem;display:flex;align-items:center;gap:0.75rem;font-weight:600}
+.section-label::before{content:'';width:24px;height:1px;background:var(--gn);box-shadow:0 0 6px var(--gn)}
+.section-title{font-family:var(--font-h);font-size:clamp(2.25rem,5vw,3.5rem);font-weight:800;
+  line-height:1.05;margin-bottom:1rem;color:var(--text)}
+#about .about-grid{display:grid;grid-template-columns:1.1fr 0.9fr;gap:4rem;align-items:center;margin-top:3.5rem}
+.about-text p{color:var(--text2);line-height:1.85;margin-bottom:1.25rem;font-size:1.05rem;font-weight:300}
+.about-text p strong{color:var(--text);font-weight:600}
+.about-tag{display:inline-block;background:var(--gn4);border:1px solid var(--border);
+  color:var(--gn);font-size:0.78rem;padding:0.3rem 0.8rem;border-radius:50px;
+  margin:0.2rem;letter-spacing:0.05em;font-weight:500}
+.about-tags{margin-top:1.5rem}
+.about-stats{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+.stat-card{background:var(--card);border:1px solid var(--border);border-radius:18px;
+  padding:1.75rem 1.5rem;text-align:center;transition:all var(--transition);
+  backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
+.stat-card:hover{border-color:var(--gn);box-shadow:0 0 30px var(--gn3);transform:translateY(-5px)}
+.stat-num{font-family:var(--font-h);font-size:2.8rem;font-weight:800;
+  background:linear-gradient(135deg,var(--gn),#88ffcc);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.stat-label{color:var(--text3);font-size:0.8rem;margin-top:0.3rem;letter-spacing:0.05em;text-transform:uppercase}
+#skills .skills-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1.5rem;margin-top:3.5rem}
+.skill-category{background:var(--card);border:1px solid var(--border);border-radius:22px;
+  padding:2rem;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);transition:all var(--transition)}
+.skill-category:hover{border-color:var(--gn);box-shadow:0 0 35px var(--gn3),0 8px 40px rgba(0,0,0,0.2)}
+.skill-cat-title{font-family:var(--font-h);font-size:0.78rem;text-transform:uppercase;
+  letter-spacing:0.15em;color:var(--gn);margin-bottom:1.25rem;
+  display:flex;align-items:center;gap:0.6rem;font-weight:700}
+.skill-cat-icon{width:16px;height:16px;flex-shrink:0;color:var(--gn)}
+.skill-tags{display:flex;flex-wrap:wrap;gap:0.6rem}
+.skill-tag{background:var(--gn4);border:1px solid rgba(0,255,136,0.15);color:var(--text);
+  padding:0.45rem 1rem;border-radius:50px;font-size:0.85rem;font-weight:500;
+  transition:all 0.3s;cursor:default;letter-spacing:0.02em}
+.skill-tag:hover{background:rgba(0,255,136,0.15);border-color:var(--gn);color:var(--gn);
+  box-shadow:0 0 15px var(--gn3);transform:translateY(-2px) scale(1.02)}
+.light .skill-tag{color:var(--text2)}
+.light .skill-tag:hover{color:var(--gn)}
+#projects .projects-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(330px,1fr));gap:1.5rem;margin-top:3.5rem}
+.project-card{background:var(--card);border:1px solid var(--border);border-radius:22px;
+  padding:2rem;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+  transition:all var(--transition);position:relative;overflow:hidden}
+.project-card::before{content:'';position:absolute;inset:0;
+  background:linear-gradient(135deg,transparent 60%,var(--gn3));opacity:0;transition:opacity 0.4s}
+.project-card::after{content:'';position:absolute;top:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,var(--gn),transparent);opacity:0;transition:opacity 0.4s}
+.project-card:hover{border-color:var(--gn);box-shadow:0 12px 50px rgba(0,255,136,0.15),0 0 0 1px rgba(0,255,136,0.1);transform:translateY(-8px)}
+.project-card:hover::before,.project-card:hover::after{opacity:1}
+.project-num{font-family:var(--font-h);font-size:4rem;font-weight:800;
+  color:rgba(0,255,136,0.06);position:absolute;top:0.75rem;right:1.5rem;line-height:1;user-select:none}
+.project-icon{width:28px;height:28px;margin-bottom:1rem;display:block;color:var(--gn);opacity:0.85}
+.project-name{font-family:var(--font-h);font-size:1.3rem;font-weight:700;margin-bottom:0.75rem;position:relative;color:var(--text)}
+.project-desc{color:var(--text2);font-size:0.9rem;line-height:1.75;margin-bottom:1.75rem;position:relative;font-weight:300}
+.project-link{display:inline-flex;align-items:center;gap:0.5rem;color:var(--gn);
+  font-size:0.82rem;font-weight:600;text-decoration:none;border:1px solid rgba(0,255,136,0.25);
+  padding:0.55rem 1.25rem;border-radius:50px;transition:all 0.3s;position:relative;letter-spacing:0.05em}
+.project-link:hover{background:rgba(0,255,136,0.1);border-color:var(--gn);box-shadow:0 0 20px var(--gn3)}
+.project-link svg{width:13px;height:13px;flex-shrink:0}
+#contact{text-align:center}
+#contact .contact-inner{max-width:720px;margin:0 auto}
+#contact .contact-desc{color:var(--text2);line-height:1.85;margin:1.5rem auto 3rem;
+  font-size:1.05rem;max-width:540px;font-weight:300}
+.contact-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-top:1rem}
+.contact-card{background:var(--card);border:1px solid var(--border);border-radius:20px;
+  padding:1.75rem 1rem;text-decoration:none;transition:all var(--transition);
+  display:flex;flex-direction:column;align-items:center;gap:0.6rem;
+  backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);position:relative;overflow:hidden}
+.contact-card::before{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,var(--gn),transparent);opacity:0;transition:opacity 0.3s}
+.contact-card:hover{border-color:var(--gn);box-shadow:0 0 35px var(--gn3);transform:translateY(-6px)}
+.contact-card:hover::before{opacity:1}
+.contact-card svg{width:26px;height:26px;color:var(--gn);transition:all 0.3s;flex-shrink:0}
+.contact-card:hover svg{filter:drop-shadow(0 0 10px var(--gn));transform:scale(1.1)}
+.contact-card span{font-size:0.78rem;color:var(--text2);font-weight:500;transition:color 0.3s;letter-spacing:0.05em;text-transform:uppercase}
+.contact-card:hover span{color:var(--gn)}
+footer{border-top:1px solid var(--border);padding:2.5rem 3rem;text-align:center;margin-top:2rem}
+.footer-inner{display:flex;flex-direction:column;align-items:center;gap:1rem}
+.footer-gh{display:inline-flex;align-items:center;gap:0.6rem;color:var(--gn);
+  text-decoration:none;font-weight:600;font-size:0.9rem;transition:all 0.3s;
+  border:1px solid var(--border);padding:0.6rem 1.5rem;border-radius:50px;letter-spacing:0.03em}
+.footer-gh:hover{border-color:var(--gn);box-shadow:0 0 20px var(--gn3);background:var(--gn4)}
+.footer-copy{color:var(--text3);font-size:0.82rem;letter-spacing:0.05em}
+#musicBtn{position:fixed;bottom:2rem;right:2rem;z-index:500;width:54px;height:54px;
+  border-radius:50%;background:var(--card);border:1px solid var(--border);
+  backdrop-filter:blur(16px);cursor:none;display:flex;align-items:center;justify-content:center;
+  transition:all 0.3s;box-shadow:0 4px 20px rgba(0,0,0,0.4)}
+#musicBtn:hover{border-color:var(--gn);box-shadow:0 0 25px var(--gn3),0 4px 20px rgba(0,0,0,0.4)}
+#musicBtn.playing{border-color:var(--gn);box-shadow:0 0 25px var(--gn3),0 0 50px rgba(0,255,136,0.1)}
+.music-eq{display:flex;align-items:flex-end;gap:2px;height:18px}
+.music-eq span{display:block;width:3px;background:var(--gn);border-radius:2px;
+  transform-origin:bottom;animation:eq 0.9s infinite ease-in-out}
+.music-eq span:nth-child(1){height:7px;animation-delay:0s}
+.music-eq span:nth-child(2){height:14px;animation-delay:0.2s}
+.music-eq span:nth-child(3){height:5px;animation-delay:0.4s}
+.music-eq span:nth-child(4){height:11px;animation-delay:0.1s}
+.music-tooltip{position:absolute;bottom:calc(100% + 8px);right:0;
+  background:var(--card);border:1px solid var(--border);color:var(--text2);
+  font-size:0.72rem;padding:0.4rem 0.8rem;border-radius:8px;white-space:nowrap;
+  opacity:0;transition:opacity 0.2s;pointer-events:none;backdrop-filter:blur(10px)}
+#musicBtn:hover .music-tooltip{opacity:1}
+.reveal{opacity:0;transform:translateY(35px);transition:opacity 0.8s cubic-bezier(0.22,1,0.36,1),transform 0.8s cubic-bezier(0.22,1,0.36,1)}
+.reveal.visible{opacity:1;transform:translateY(0)}
+.reveal-delay-1{transition-delay:0.1s}
+.reveal-delay-2{transition-delay:0.2s}
+.reveal-delay-3{transition-delay:0.3s}
+@media(max-width:900px){
+  nav{padding:1rem 1.5rem}
+  .nav-links{display:none}
+  section{padding:5rem 1.5rem}
+  #about .about-grid{grid-template-columns:1fr;gap:2.5rem}
+  .contact-grid{grid-template-columns:repeat(2,1fr)}
+  footer{padding:2rem 1.5rem}
+}
+@media(max-width:600px){
+  .hero-btns{flex-direction:column;align-items:center}
+  .projects-grid{grid-template-columns:1fr}
+  .contact-grid{grid-template-columns:repeat(2,1fr)}
+  .about-stats{grid-template-columns:1fr 1fr}
+}
+</style>
+</head>
+<body>
+
+<div class="grid-bg" aria-hidden="true"></div>
+<div id="cursor" aria-hidden="true"></div>
+<div id="cursor-ring" aria-hidden="true"></div>
+
+<div id="preloader" role="status" aria-label="Loading portfolio">
+  <div class="pre-logo">PAIM</div>
+  <div class="pre-sub">Portfolio</div>
+  <div class="pre-bar-wrap"><div class="pre-bar"></div></div>
+</div>
+
+<nav id="navbar" role="navigation" aria-label="Main navigation">
+  <a href="#hero" class="nav-logo">PAIM.</a>
+  <ul class="nav-links">
+    <li><a href="#about">About</a></li>
+    <li><a href="#skills">Skills</a></li>
+    <li><a href="#projects">Projects</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+  <div class="nav-right">
+    <button class="theme-btn" id="themeBtn" aria-label="Toggle theme">
+      <svg id="themeIcon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:4px"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg><span id="themeTxt">Light</span>
+    </button>
+  </div>
+</nav>
+
+<section id="hero">
+  <canvas id="heroCanvas" aria-hidden="true"></canvas>
+  <div class="hero-content">
+    <div class="hero-badge"><div class="hero-dot"></div>Available for projects</div>
+    <h1 class="hero-title">
+      <span class="line1">Hi, I'm</span>
+      <span class="grad">Paim</span>
+    </h1>
+    <p class="hero-sub">Web Application Developer — Building scalable and user-friendly applications with clean code and modern technology.</p>
+    <div class="hero-btns">
+      <a href="#projects" class="btn-primary">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+        View Projects
+      </a>
+      <a href="#contact" class="btn-outline">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+        Contact Me
+      </a>
+    </div>
+  </div>
+  <div class="hero-scroll" aria-hidden="true">
+    <span class="scroll-text">Scroll</span>
+    <div class="scroll-line"></div>
+  </div>
+</section>
+
+<section id="about">
+  <div class="reveal">
+    <div class="section-label">Who I Am</div>
+    <h2 class="section-title">Crafting Digital<br>Experiences</h2>
+  </div>
+  <div class="about-grid">
+    <div class="about-text reveal reveal-delay-1">
+      <p>I'm a <strong>Full-Stack Developer</strong> with a passion for crafting elegant, high-performance web applications that solve real-world problems and delight users.</p>
+      <p>Currently <strong>deepening my expertise</strong> in advanced web technologies — from scalable backend architectures to immersive, accessible frontends. Every project is a chance to learn something new.</p>
+      <p>I'm always <strong>open to collaboration</strong> on meaningful projects. I believe the best software is built by people who care deeply about both the craft and the human experience behind it.</p>
+      <div class="about-tags">
+        <span class="about-tag">Full-Stack</span>
+        <span class="about-tag">Open Source</span>
+        <span class="about-tag">Open to Work</span>
+        <span class="about-tag" style="display:inline-flex;align-items:center;gap:0.35rem;">Malaysia <svg width="14" height="14" viewBox="0 0 24 16" fill="none" xmlns="http://www.w3.org/2000/svg" style="flex-shrink:0"><rect width="24" height="16" rx="1" fill="#CC0001"/><rect y="1.333" width="24" height="1.333" fill="#fff"/><rect y="4" width="24" height="1.333" fill="#fff"/><rect y="6.667" width="24" height="1.333" fill="#fff"/><rect y="9.333" width="24" height="1.333" fill="#fff"/><rect y="12" width="24" height="1.333" fill="#fff"/><rect y="14.667" width="24" height="1.333" fill="#fff"/><rect width="12" height="8" fill="#010066"/><path d="M5.5 4a2 2 0 100 4 2 2 0 000-4z" fill="#FC0"/><path d="M6 3.8a1.6 1.6 0 100 3.2 1.6 1.6 0 000-3.2z" fill="#010066"/><path d="M7.5 5.5l.7-.25-.7-.25V4.5l-.5.6-.7-.25.4.6-.5.6.7-.25.4.6V5.75l.7-.25z" fill="#FC0"/></svg></span>
+      </div>
+    </div>
+    <div class="about-stats reveal reveal-delay-2">
+      <div class="stat-card"><div class="stat-num">6+</div><div class="stat-label">Projects Live</div></div>
+      <div class="stat-card"><div class="stat-num">10+</div><div class="stat-label">Technologies</div></div>
+      <div class="stat-card"><div class="stat-num">100%</div><div class="stat-label">Dedication</div></div>
+      <div class="stat-card"><div class="stat-num">∞</div><div class="stat-label">Curiosity</div></div>
+    </div>
+  </div>
+</section>
+
+<section id="skills">
+  <div class="reveal">
+    <div class="section-label">What I Use</div>
+    <h2 class="section-title">Skills &amp;<br>Technologies</h2>
+  </div>
+  <div class="skills-grid">
+    <div class="skill-category reveal reveal-delay-1">
+      <div class="skill-cat-title"><svg class="skill-cat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg> Frontend</div>
+      <div class="skill-tags"><span class="skill-tag">HTML</span><span class="skill-tag">CSS</span><span class="skill-tag">JavaScript</span><span class="skill-tag">React</span></div>
+    </div>
+    <div class="skill-category reveal reveal-delay-2">
+      <div class="skill-cat-title"><svg class="skill-cat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg> Backend</div>
+      <div class="skill-tags"><span class="skill-tag">Node.js</span><span class="skill-tag">PHP</span><span class="skill-tag">Laravel</span></div>
+    </div>
+    <div class="skill-category reveal reveal-delay-1">
+      <div class="skill-cat-title"><svg class="skill-cat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg> Database</div>
+      <div class="skill-tags"><span class="skill-tag">MySQL</span><span class="skill-tag">MongoDB</span></div>
+    </div>
+    <div class="skill-category reveal reveal-delay-2">
+      <div class="skill-cat-title"><svg class="skill-cat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z"/></svg> Others</div>
+      <div class="skill-tags"><span class="skill-tag">Python</span><span class="skill-tag">C</span><span class="skill-tag">C#</span><span class="skill-tag">Linux</span><span class="skill-tag">Git</span></div>
+    </div>
+  </div>
+</section>
+
+<section id="projects">
+  <div class="reveal">
+    <div class="section-label">What I've Built</div>
+    <h2 class="section-title">Featured<br>Projects</h2>
+  </div>
+  <div class="projects-grid">
+    <article class="project-card reveal reveal-delay-1">
+      <div class="project-num">01</div>
+      <span class="project-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg></span>
+      <h3 class="project-name">HealthChecker Pro</h3>
+      <p class="project-desc">A comprehensive health monitoring application that helps users track and understand their health metrics with intuitive dashboards and smart, actionable insights.</p>
+      <a href="https://healthcheckerpro.vercel.app/" target="_blank" rel="noopener noreferrer" class="project-link">Visit Site <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a>
+    </article>
+    <article class="project-card reveal reveal-delay-2">
+      <div class="project-num">02</div>
+      <span class="project-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 10h-1.26A8 8 0 109 20h9a5 5 0 000-10z"/></svg></span>
+      <h3 class="project-name">AtmosWeather Pro</h3>
+      <p class="project-desc">A sleek, real-time weather application delivering accurate forecasts with beautiful data visualizations and a seamlessly smooth user experience.</p>
+      <a href="https://atmosweather-pro.vercel.app/" target="_blank" rel="noopener noreferrer" class="project-link">Visit Site <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a>
+    </article>
+    <article class="project-card reveal reveal-delay-3">
+      <div class="project-num">03</div>
+      <span class="project-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></span>
+      <h3 class="project-name">ImanLift</h3>
+      <p class="project-desc">A spiritual wellness platform designed to uplift and inspire, providing daily guidance and resources for personal growth and faith.</p>
+      <a href="https://imanlift.vercel.app/" target="_blank" rel="noopener noreferrer" class="project-link">Visit Site <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a>
+    </article>
+    <article class="project-card reveal reveal-delay-1">
+      <div class="project-num">04</div>
+      <span class="project-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg></span>
+      <h3 class="project-name">GoldenFocus</h3>
+      <p class="project-desc">A precision productivity and focus application helping users achieve deep work states, track concentration sessions, and build lasting attention habits.</p>
+      <a href="https://goldenfocus-psi.vercel.app/" target="_blank" rel="noopener noreferrer" class="project-link">Visit Site <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a>
+    </article>
+    <article class="project-card reveal reveal-delay-2">
+      <div class="project-num">05</div>
+      <span class="project-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg></span>
+      <h3 class="project-name">Palestine</h3>
+      <p class="project-desc">A meaningful awareness platform dedicated to sharing information and raising consciousness about the Palestinian cause through respectful, clean design.</p>
+      <a href="https://palestine-beta.vercel.app/" target="_blank" rel="noopener noreferrer" class="project-link">Visit Site <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a>
+    </article>
+    <article class="project-card reveal reveal-delay-3">
+      <div class="project-num">06</div>
+      <span class="project-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg></span>
+      <h3 class="project-name">Malaysia Blue</h3>
+      <p class="project-desc">A locally-focused web project celebrating Malaysian identity and culture, built with community-first design principles and national pride.</p>
+      <a href="https://malaysia-blue.vercel.app/" target="_blank" rel="noopener noreferrer" class="project-link">Visit Site <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a>
+    </article>
+  </div>
+</section>
+
+<section id="contact">
+  <div class="contact-inner">
+    <div class="reveal">
+      <div class="section-label" style="justify-content:center">Let's Connect</div>
+      <h2 class="section-title">Get In Touch</h2>
+      <p class="contact-desc">Whether you have a project idea, want to collaborate, or just want to say hello — my inbox is always open. Let's build something great together.</p>
+    </div>
+    <div class="contact-grid reveal">
+      <a href="https://www.linkedin.com/in/paim41/" target="_blank" rel="noopener noreferrer" class="contact-card" aria-label="LinkedIn">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+        <span>LinkedIn</span>
+      </a>
+      <a href="https://github.com/Paim41/" target="_blank" rel="noopener noreferrer" class="contact-card" aria-label="GitHub">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg>
+        <span>GitHub</span>
+      </a>
+      <a href="mailto:sakacomel@gmail.com" class="contact-card" aria-label="Email">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+        <span>Email</span>
+      </a>
+      <a href="https://t.me/MadzKechik" target="_blank" rel="noopener noreferrer" class="contact-card" aria-label="Telegram">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg>
+        <span>Telegram</span>
+      </a>
+      <a href="https://wa.me/60107996639" target="_blank" rel="noopener noreferrer" class="contact-card" aria-label="WhatsApp">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+        <span>WhatsApp</span>
+      </a>
+      <!-- FIXED: Instagram now active with real link -->
+      <a href="https://www.instagram.com/paim41/" target="_blank" rel="noopener noreferrer" class="contact-card" aria-label="Instagram">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+        <span>Instagram</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-inner">
+    <a href="https://github.com/Paim41" target="_blank" rel="noopener noreferrer" class="footer-gh">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg>
+      github.com/Paim41
+    </a>
+    <p class="footer-copy">© 2026 Paim. All rights reserved.</p>
+  </div>
+</footer>
+
+<!-- MUSIC BUTTON -->
+<button id="musicBtn" title="Music" aria-label="Toggle background music">
+  <div class="music-tooltip">Toggle Music</div>
+  <svg id="musicIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:20px;height:20px;color:var(--gn)"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+</button>
+
+<!--
+  MUSIC FIX EXPLANATION:
+  Browsers block autoplay WITH SOUND. They DO allow autoplay when muted.
+  Strategy:
+  1. iframe src uses autoplay=1&mute=1 — video starts playing silently in background
+  2. When user clicks play button (user gesture) — we unmute and fade volume in
+  3. This fully satisfies the browser autoplay policy
+  4. We keep the YT player reference stable (never reassign ytPlayer) and only
+     update the button UI via a dedicated helper, not innerHTML reassignment mid-play
+-->
+<div style="position:fixed;opacity:0;pointer-events:none;width:1px;height:1px;overflow:hidden;bottom:0;right:0">
+  <iframe id="ytFrame" width="1" height="1"
+    src="https://www.youtube.com/embed/5mvCVJIZWtA?enablejsapi=1&loop=1&playlist=5mvCVJIZWtA&autoplay=1&mute=1"
+    allow="autoplay; encrypted-media"
+    frameborder="0"></iframe>
+</div>
+
+<script src="https://www.youtube.com/iframe_api"></script>
+<script>
+// ── PRELOADER
+window.addEventListener('load', () => {
+  setTimeout(() => {
+    document.getElementById('preloader').classList.add('done');
+    initReveal();
+  }, 2200);
+});
+
+// ── THEME
+const themeBtn = document.getElementById('themeBtn');
+const themeIcon = document.getElementById('themeIcon');
+const themeTxt = document.getElementById('themeTxt');
+const sunPaths = '<circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>';
+const moonPaths = '<path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/>';
+const savedTheme = localStorage.getItem('paim-theme') || 'dark';
+if (savedTheme === 'light') { document.body.classList.add('light'); themeIcon.innerHTML = moonPaths; themeTxt.textContent = 'Dark'; }
+themeBtn.addEventListener('click', () => {
+  document.body.classList.toggle('light');
+  const isLight = document.body.classList.contains('light');
+  themeIcon.innerHTML = isLight ? moonPaths : sunPaths;
+  themeTxt.textContent = isLight ? 'Dark' : 'Light';
+  localStorage.setItem('paim-theme', isLight ? 'light' : 'dark');
+});
+
+// ── CURSOR
+const cursor = document.getElementById('cursor');
+const ring = document.getElementById('cursor-ring');
+let mx = 0, my = 0, rx = 0, ry = 0;
+document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; cursor.style.left = mx+'px'; cursor.style.top = my+'px'; });
+(function animRing(){ rx+=(mx-rx)*0.12; ry+=(my-ry)*0.12; ring.style.left=rx+'px'; ring.style.top=ry+'px'; requestAnimationFrame(animRing); })();
+document.querySelectorAll('a,button,.skill-tag,.project-card,.contact-card,.stat-card,.skill-category').forEach(el=>{
+  el.addEventListener('mouseenter',()=>{ cursor.style.width='6px'; cursor.style.height='6px'; ring.style.width='60px'; ring.style.height='60px'; ring.style.borderColor='rgba(0,255,136,0.7)'; ring.style.background='rgba(0,255,136,0.04)'; });
+  el.addEventListener('mouseleave',()=>{ cursor.style.width='12px'; cursor.style.height='12px'; ring.style.width='40px'; ring.style.height='40px'; ring.style.borderColor='rgba(0,255,136,0.4)'; ring.style.background='transparent'; });
+});
+
+// ── HERO CANVAS
+const canvas = document.getElementById('heroCanvas');
+const ctx = canvas.getContext('2d');
+let W, H, particles = [];
+const heroSection = document.getElementById('hero');
+function resizeCanvas(){ W=canvas.width=heroSection.offsetWidth; H=canvas.height=heroSection.offsetHeight; }
+resizeCanvas();
+window.addEventListener('resize',()=>{ resizeCanvas(); makeParticles(); });
+class Particle{
+  constructor(){ this.reset(); }
+  reset(){ this.x=Math.random()*W; this.y=Math.random()*H; this.vx=(Math.random()-0.5)*0.45; this.vy=(Math.random()-0.5)*0.45; this.size=Math.random()*1.8+0.3; this.alpha=Math.random()*0.65+0.2; this.pulse=Math.random()*Math.PI*2; this.pulseSpeed=0.015+Math.random()*0.02; }
+  update(){ this.x+=this.vx; this.y+=this.vy; this.pulse+=this.pulseSpeed; if(this.x<-10||this.x>W+10||this.y<-10||this.y>H+10) this.reset(); }
+  draw(){ const a=this.alpha*(0.5+0.5*Math.sin(this.pulse)); ctx.beginPath(); ctx.arc(this.x,this.y,this.size,0,Math.PI*2); ctx.fillStyle=`rgba(0,255,136,${a})`; ctx.fill(); }
+}
+function makeParticles(){ const n=Math.min(Math.floor(W*H/7000),150); particles=Array.from({length:n},()=>new Particle()); }
+makeParticles();
+let heroMouseX=W/2, heroMouseY=H/2;
+heroSection.addEventListener('mousemove',e=>{ const r=heroSection.getBoundingClientRect(); heroMouseX=e.clientX-r.left; heroMouseY=e.clientY-r.top; });
+function drawConnections(){ const len=particles.length; for(let i=0;i<len;i++){ const p=particles[i]; for(let j=i+1;j<len;j++){ const q=particles[j]; const d=Math.hypot(p.x-q.x,p.y-q.y); if(d<100){ ctx.beginPath(); ctx.moveTo(p.x,p.y); ctx.lineTo(q.x,q.y); ctx.strokeStyle=`rgba(0,255,136,${(1-d/100)*0.12})`; ctx.lineWidth=0.5; ctx.stroke(); } } const dm=Math.hypot(p.x-heroMouseX,p.y-heroMouseY); if(dm<160){ ctx.beginPath(); ctx.moveTo(p.x,p.y); ctx.lineTo(heroMouseX,heroMouseY); ctx.strokeStyle=`rgba(0,255,136,${(1-dm/160)*0.28})`; ctx.lineWidth=0.6; ctx.stroke(); } } }
+function heroAnimate(){ ctx.clearRect(0,0,W,H); const grd=ctx.createRadialGradient(W/2,H*0.55,0,W/2,H*0.55,W*0.55); grd.addColorStop(0,'rgba(0,255,136,0.045)'); grd.addColorStop(1,'transparent'); ctx.fillStyle=grd; ctx.fillRect(0,0,W,H); drawConnections(); particles.forEach(p=>{p.update();p.draw();}); requestAnimationFrame(heroAnimate); }
+heroAnimate();
+
+// ── SCROLL REVEAL
+function initReveal(){ const obs=new IntersectionObserver((entries)=>{ entries.forEach(entry=>{ if(entry.isIntersecting){ entry.target.classList.add('visible'); obs.unobserve(entry.target); } }); },{threshold:0.1,rootMargin:'0px 0px -60px 0px'}); document.querySelectorAll('.reveal').forEach(el=>obs.observe(el)); }
+
+// ── ACTIVE NAV
+const navLinks=document.querySelectorAll('.nav-links a');
+const sections=document.querySelectorAll('section[id]');
+function updateActiveNav(){ let current=''; sections.forEach(s=>{ if(window.scrollY>=s.offsetTop-250) current=s.id; }); navLinks.forEach(a=>{ a.classList.toggle('active',a.getAttribute('href')==='#'+current); }); }
+window.addEventListener('scroll',updateActiveNav,{passive:true});
+
+// ── SMOOTH SCROLL
+document.querySelectorAll('a[href^="#"]').forEach(a=>{ a.addEventListener('click',e=>{ const href=a.getAttribute('href'); if(href==='#') return; const target=document.querySelector(href); if(target){ e.preventDefault(); target.scrollIntoView({behavior:'smooth',block:'start'}); } }); });
+
+// ── MUSIC PLAYER (FIXED)
+// Root cause of original bug:
+// 1. Old code used innerHTML rebuild which destroyed event listeners & caused issues
+// 2. Browser autoplay policy: sound is blocked without user gesture
+// Fix: iframe starts muted (browser allows) → user clicks → we unmute + fade in
+const musicBtn = document.getElementById('musicBtn');
+let ytPlayer = null;
+let playing = false;
+
+const tooltipHTML = '<div class="music-tooltip">Toggle Music</div>';
+const playIconHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:20px;height:20px;color:var(--gn)"><polygon points="5 3 19 12 5 21 5 3"/></svg>';
+const eqHTML = '<div class="music-eq"><span></span><span></span><span></span><span></span></div>';
+
+function setBtnState(isPlaying) {
+  musicBtn.innerHTML = tooltipHTML + (isPlaying ? eqHTML : playIconHTML);
+  musicBtn.classList.toggle('playing', isPlaying);
+}
+
+window.onYouTubeIframeAPIReady = function() {
+  ytPlayer = new YT.Player('ytFrame', {
+    videoId: '5mvCVJIZWtA',
+    playerVars: { autoplay: 1, loop: 1, playlist: '5mvCVJIZWtA', controls: 0, mute: 1 },
+    events: {
+      onReady: function(e) {
+        // Mute & play silently — satisfies browser autoplay policy
+        e.target.mute();
+        e.target.playVideo();
+      }
+    }
+  });
+};
+
+musicBtn.addEventListener('click', () => {
+  if (!ytPlayer || typeof ytPlayer.playVideo !== 'function') return;
+
+  playing = !playing;
+
+  if (playing) {
+    // User gesture: now safe to unmute
+    ytPlayer.playVideo();
+    ytPlayer.unMute();
+    ytPlayer.setVolume(0);
+    let vol = 0;
+    const fadeIn = setInterval(() => {
+      vol = Math.min(vol + 4, 70);
+      ytPlayer.setVolume(vol);
+      if (vol >= 70) clearInterval(fadeIn);
+    }, 60);
+    setBtnState(true);
+  } else {
+    // Fade out then pause
+    let vol = 70;
+    const fadeOut = setInterval(() => {
+      vol = Math.max(vol - 4, 0);
+      ytPlayer.setVolume(vol);
+      if (vol <= 0) { clearInterval(fadeOut); ytPlayer.pauseVideo(); }
+    }, 60);
+    setBtnState(false);
+  }
+});
+</script>
+</body>
+</html>
